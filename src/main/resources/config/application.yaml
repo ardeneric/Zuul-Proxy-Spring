@@ -1,0 +1,54 @@
+spring:
+  application:
+    name: eureka-service
+  thymeleaf:
+    cache: false
+    
+server:
+  port: 8761
+  session:
+    cookie:
+      name: UISESSION
+      
+
+     
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+    server:
+      wait-time-in-ms-when-sync-empty: 0 
+
+
+zuul:
+  prefix: /api
+  routes:
+    db-service:
+      path: /db-service/**
+      url: http://localhost:8301
+    location-service:
+      path: /location-service/**
+      url: http://localhost:8302
+      
+security:
+  basic:
+    enabled: false  
+  oauth2:
+    client:
+      client-id: clientId
+      client-secret: secret
+      access-token-uri: http://localhost:8501/auth/oauth/token
+      user-authorization-uri: http://localhost:8501/auth/oauth/authorize
+    resource:
+      user-info-uri: http://localhost:8501/auth/getCurrentUser
+      preferTokenInfo: false  
+  sessions: ALWAYS 
+  
+proxy:
+  auth:
+    routes:
+      db-service: oauth2
+      location-service: oauth2
+      
